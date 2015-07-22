@@ -20,38 +20,39 @@ of a driver) or to let other part of the application what is the state of a
 plugin (for example a list of all the available drivers).
 
 One could of course directly access the plugin to get those informations but
-in a plugin application it is a good to avoid such interferences. Those
+in a plugin application it is good to avoid such interferences. Those
 informations are actually delegated to two plugin responsible for managing
 them :
 
 - the 'enaml.workbench.core' plugin is in charge of managing commands which are
   the equivalent of application wide available function. Each command has an
   id which is used to invoke it using the |invoke_command| of the |CorePlugin|
-  (this is the only case in which one needs to access directly to a plugin).
+  (this is the only case in which one needs to access directly a plugin).
   When invoking a command one must pass a dictionary of parameters and can
   optionally pass the invoking plugin. To know what arguments the command
   expect you should look at its description in the manifest of the plugin
   contributing it.
-- the 'ecpy.app.states' plugin is in charge of managing states which allow to
-  get access to a read-only representation of some of the attributes of a
+- the 'ecpy.app.states' plugin is in charge of managing states, and allows 
+  getting access to a read-only representation of some of the attributes of a
   plugin. The state of a plugin can be requested using the Command
-  'ecpy.app.states.get' with an id parameters identifying the plugin
-  constituting the state. If you need to access to such a state you should
-  observe the alive attribute which becomes `False` when the plugin
+  'ecpy.app.states.get_state' with an id parameters identifying the plugin
+  constituting the state. If you need to access such a state you should
+  observe the alive attribute, which becomes `False` when the plugin
   contributing the state is unregistered.
+  
 
 Declaring a Command
 ^^^^^^^^^^^^^^^^^^^
 
-In order to declare a command, you must contribute an |Command| object to the
+In order to declare a command, you must contribute a |Command| object to the
 'enaml.workbench.core.commands'  extension point. A |Command| must have :
 
 - an id which must be unique (this a dot separated name)
 - a handler which is a function taking a argument an |ExecutionEvent| instance.
-  The execution event allows to access to the application workbench
-  ('workbench' attribute) and to the parameters ('parameters' attribute) passed
+  The execution event allows to access the application workbench
+  ('workbench' attribute) and the parameters ('parameters' attribute) passed
   to the |invoke_command| method. IF the command need to access
-  to the plugin you can do so easily using the workbench.
+   the plugin you can do so easily using the workbench.
 - a description which is basically the docstring of the command and should be
   formatted as such (see :doc:`style_guide`).
 
@@ -78,9 +79,9 @@ is running the application should not exit without a huge warning). The
 'ecpy.app' plugin is responsible for handling all those possibilities. It
 relies on three extension points (one for each behaviour) :
 
-- 'ecpy.app.startup' accepts |AppStartup| contributions and deal with the start
+- 'ecpy.app.startup' accepts |AppStartup| contributions and deals with the start
   up of the application.
-- 'ecpy.app.closing' accepts |AppClosing| contributions and deal with whether
+- 'ecpy.app.closing' accepts |AppClosing| contributions and deals with whether
   or not the application can be closed.
 - 'ecpy.app.closed' accepts |AppClosed| contributions to run clean up operation
   before starting to unregister plugins.
@@ -92,7 +93,7 @@ relies on three extension points (one for each behaviour) :
    methods of the plugin. This fits operation that must be performed at
    application start up and cannot be deferred to plugin starting, or clean up
    operations requiring the full application to be active (ie not dependent
-   only on the plugin state).
+   only on the plugin state). 
 
 Declaring an AppStartup extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -141,7 +142,7 @@ must have :
   have to.
 - a 'clean' attribute which must be a callable taking as single argument the
   workbench.
-- a priority, which is an integer specifying when to call this start up.
+- a priority, which is an integer specifying when to call this closed.
 
 .. note::
 
@@ -161,7 +162,7 @@ start method. Second all members which should be saved should be
 tagged with the 'pref' metadata (use the tag method). The value of the
 metadata can be `True` or any of the values presented in :ref: XXXX. All value thus
 tagged are loaded from the preference file if found, and saved when the user
-request to save the preferences. Finally, a |Preferences| object to the
+request to save the preferences. Finally, you should contribute a |Preferences| object to the
 'ecpy.app.preferences.plugin' extension point. A single |Preferences| object
 can be contributed per plugin.
 
@@ -176,7 +177,7 @@ A |Preferences| object has the following members :
 - 'auto_save': list of the names of members whose update should trigger an
   automatic saving of the preferences.
 - 'edit_view': an enaml Container used to edit the preferences of the plugin.
-  If no such object is conytributed the default templating mechanism presented
+  If no such object is contributed the default templating mechanism presented
   below is used.
 - 'saving_method': name of the plugin method to use to retrieve the values of
   the members which should be saved.
@@ -195,7 +196,7 @@ Editing preferences object
 Declaring dependencies
 ----------------------
 
-When loading and transferring complex object over the network Ecpy needs to
+When loading and transferring complex objects over the network, Ecpy needs to
 collect all the base classes needed for reconstructing the object in an
 environment lacking an active workbench. These are considered to be
 build dependencies. In the same way some resources can be necessary to execute
@@ -203,7 +204,7 @@ some part of the application and need to be queried beforehand to allow the
 system to run in a situation where the workbench is absent. Those are
 considered to be run-time dependencies.
 
-If your plugin introduces new object which can, for example, be used in tasks
+If your plugin introduces a new object which can, for example, be used in tasks
 either as a build or as a runtime dependency you need to contribute either a
 |BuildDependency| object to the 'ecpy.app.dependencies.build' extension point
 or a |RuntimeDependecy| object to the 'ecpy.app.dependencies.runtime'
@@ -212,7 +213,7 @@ extension point.
 .. note::
 
     An object introducing a new kind of build dependency should have a dep_type
-    attribute which should be an atom.Constant and which must be saved if the
+    attribute that should be an atom.Constant and that must be saved if the
     object can be saved under the .ini format.
 
 A |BuildDependency| needs:
@@ -234,7 +235,7 @@ Customizing logging
 By default Ecpy use two logs:
 
 - a log collecting all levels and directed to a file (in the application folder
-  under logs) and which is rotated daily or every time the application starts.
+  under logs), which is rotated daily or every time the application starts.
 - a log collecting INFO log and above and stored in a string with a max of 1000
   lines. This string is meant to be used for displaying the log in the GUI, and
   is available from the state of the log plugin ('ecpy.app.logging').
