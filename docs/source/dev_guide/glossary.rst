@@ -5,7 +5,7 @@
 Glossary and principle
 ======================
 
-Ecpy is built a a plugin-application. Each functionality is contributed by a
+Ecpy is built as a plugin-application. Each functionality is contributed by a
 plugin which is mounted at application start-up (or later) and can be
 unmounted. This adds a bit of complexity to the application but a lot of
 flexibility. This section will introduce some notions and definitions which
@@ -19,7 +19,7 @@ Application architecture
 
 At the core of the application stands the workbench which is responsible for
 handling the registering and unregistering of all plugins. It is through it
-that one can access to a plugin. All plugins can access to the workbench
+that one can access a plugin. All plugins can access the workbench
 through their 'workbench' attribute.
 
 See the Workbench in enaml.workbench.workbench.py for more details about the
@@ -34,7 +34,7 @@ A plugin is divided into two parts:
 - a manifest (subclass of |PluginManifest|) which
   is purely declarative and states what functionalities the plugin contribute
   to the application and how its own functionalities can be extended.
-- an active part (subclass of |Plugin|) which implement
+- an active part (subclass of |Plugin|) which implements
   the logic necessary for the new functionality provided by the plugin (such
   as the handling of the contributions to the plugin functionalities).
 
